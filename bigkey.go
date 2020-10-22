@@ -39,7 +39,6 @@ func main() {
 
 	dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuilds | discordgo.IntentsGuildMessages | discordgo.IntentsGuildVoiceStates)
 
-	// Open the websocket and begin listening.
 	err = dg.Open()
 	if err != nil {
 		logger.Fatal("failed to open discord session",
@@ -62,8 +61,6 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
-	// Ignore all messages created by the bot itself
-	// This isn't required in this specific example but it's a good practice.
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
