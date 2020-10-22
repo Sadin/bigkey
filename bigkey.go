@@ -35,6 +35,8 @@ func main() {
 
 	dg.AddHandler(guildCreate)
 
+	dg.AddHandler(messageCreate)
+
 	dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuilds | discordgo.IntentsGuildMessages | discordgo.IntentsGuildVoiceStates)
 
 	// Open the websocket and begin listening.
