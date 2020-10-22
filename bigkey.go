@@ -1,12 +1,16 @@
 package main
 
 import (
+	"flag"
 	"os"
 
+	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 )
 
 func init() {
+	flag.StringVar(&token, "t", "", "Bot Token")
+	flag.Parse()
 	// Log as JSON instead of the default ASCII formatter.
 	log.SetFormatter(&log.JSONFormatter{})
 
@@ -18,7 +22,15 @@ func init() {
 	log.SetLevel(log.WarnLevel)
 }
 
+var token string
+
 func main() {
+
+	dg, err := discordgo.New("Bot " + token)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	log.WithFields(log.Fields{
 		"animal": "walrus",
 		"size":   10,
@@ -43,4 +55,6 @@ func main() {
 
 	contextLogger.Info("I'll be logged with common and other field")
 	contextLogger.Info("Me too")
+
+	dg.Close()
 }
