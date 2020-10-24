@@ -56,6 +56,7 @@ func main() {
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {
 
+	logger.Info("updating status")
 	s.UpdateStatus(0, "beeg keys")
 }
 
