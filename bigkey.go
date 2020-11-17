@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
@@ -68,12 +70,24 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
+	prefix := strings.TrimRight(m.Content, " ")
+
 	logger.Info("message sent",
 		zap.String("content", m.Content),
 		zap.String("channelid", m.ChannelID),
 		zap.String("userid", m.Message.Author.ID),
 		zap.String("guildId", m.GuildID),
 	)
+
+	if prefix == "--help" || prefix == "-h" {
+		logger.Info("command receieved",
+			zap.String("command", prefix),
+		)
+
+		msg := fmt.Sprintf("\n\n**Commands**\n\n `--help, -h`\t~\tdisplays this menu\n")
+
+		s.ChannelMessageSend(m.ChannelID, msg)
+	}
 
 }
 
