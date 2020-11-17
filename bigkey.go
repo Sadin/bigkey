@@ -35,6 +35,8 @@ func main() {
 
 	dg.AddHandler(guildCreate)
 
+	dg.AddHandler(channelUpdate)
+
 	dg.AddHandler(messageCreate)
 
 	dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuilds | discordgo.IntentsGuildMessages | discordgo.IntentsGuildVoiceStates)
@@ -66,9 +68,11 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	logger.Info(m.Content,
+	logger.Info("message sent",
+		zap.String("content", m.Content),
 		zap.String("channelid", m.ChannelID),
 		zap.String("userid", m.Message.Author.ID),
+		zap.String("guildId", m.GuildID),
 	)
 
 }
@@ -79,9 +83,10 @@ func guildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 		return
 	}
 
-	logger.Info(event.Guild.Name,
-		zap.String("guildid", event.Guild.ID),
-		zap.Int("membercount", event.Guild.MemberCount),
+	logger.Info("guild joined",
+		zap.String("guildName", event.Guild.Name),
+		zap.String("guildId", event.Guild.ID),
+		zap.Int("memberCount", event.Guild.MemberCount),
 		zap.String("region", event.Guild.Region),
 	)
 
@@ -91,4 +96,11 @@ func guildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 			logger.Info(channel.)
 		}
 	*/
+}
+
+func channelUpdate(s *discordgo.Session, event *discordgo.ChannelUpdate) {
+	logger.Info("channel updated",
+		zap.String("channelId", event.Channel.ID),
+		zap.String("guildId", event.Channel.GuildID),
+	)
 }
