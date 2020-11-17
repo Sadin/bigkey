@@ -79,7 +79,16 @@ func guildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 		return
 	}
 
-	for _, channel := range event.Guild.Channels {
-		logger.Info(channel.Name)
-	}
+	logger.Info(event.Guild.Name,
+		zap.String("guildid", event.Guild.ID),
+		zap.Int("membercount", event.Guild.MemberCount),
+		zap.String("region", event.Guild.Region),
+	)
+
+	/*
+		for _, channel := range event.Guild.Channels {
+			logger.Info(channel.Name)
+			logger.Info(channel.)
+		}
+	*/
 }
