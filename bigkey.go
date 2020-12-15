@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
@@ -34,6 +36,8 @@ func main() {
 	dg.AddHandler(ready)
 
 	dg.AddHandler(guildCreate)
+
+	dg.AddHandler(channelUpdate)
 
 	dg.AddHandler(messageCreate)
 
@@ -66,10 +70,24 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	logger.Info(m.Content,
+	prefix := strings.TrimRight(m.Content, " ")
+
+	logger.Info("message sent",
+		zap.String("content", m.Content),
 		zap.String("channelid", m.ChannelID),
 		zap.String("userid", m.Message.Author.ID),
+		zap.String("guildId", m.GuildID),
 	)
+
+	if prefix == "--help" || prefix == "-h" {
+		logger.Info("command receieved",
+			zap.String("command", prefix),
+		)
+
+		msg := fmt.Sprintf("\n\n**Commands**\n\n `--help, -h`\t~\tdisplays this menu\n")
+
+		s.ChannelMessageSend(m.ChannelID, msg)
+	}
 
 }
 
@@ -80,12 +98,23 @@ func guildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 	}
 
 	logger.Info("Connected Guild",
-		zap.String("guildid", event.Guild.ID),
-		zap.String("guildname", event.Guild.Name),
+		zap.String("guildName", event.Guild.Name),
+		zap.String("guildId", event.Guild.ID),
+		zap.Int("memberCount", event.Guild.MemberCount),
+		zap.String("region", event.Guild.Region),
 	)
+
 	/*
 		for _, channel := range event.Guild.Channels {
 			logger.Info(channel.Name)
+			logger.Info(channel.)
 		}
 	*/
+}
+
+func channelUpdate(s *discordgo.Session, event *discordgo.ChannelUpdate) {
+	logger.Info("channel updated",
+		zap.String("channelId", event.Channel.ID),
+		zap.String("guildId", event.Channel.GuildID),
+	)
 }
